@@ -1,22 +1,38 @@
-// ITC 230 Nicole Brown. Get Node.js up and running.
-/* PLEASE NOTE: File shoud be named index.js, I named it main.js. 
-Server would not run when I tried to rename file. 
-reverted filename back to main.js, and it runs. nbrown*/
+/* ITC 230 Nicole Brown. 
+* Assignment 1 Get Node.js up and running.
+* PLEASE NOTE: File shoud be named index.js, I named it main.js by mistake. 
+*/
 
-//Import module
+/*routing*/
 
-var http = require("http");
+var http = require("http"); 
+var fs = require("fs");
 
-/*Create server*/
-
-http.createServer(function (request, response) {
-    //send the HTTP header
-    //HTTP Status: 200 : OK
-    //Content Type: text/plain
-    response.writeHead(200, {'Content-Type': 'text/plain'});
+http.createServer(function (req,res) {
+    //changes url to lower
+    var path = req.url.toLowerCase();
     
-    //Send the response body as "Hello World"
-    response.end('Ciao Mondo!\n');
-    //Use cloud9 port assignment or use port 3000.
-}).listen(process.env.PORT || 3000);
+    //switch to path
+    switch(path) {
+        case '/':
+            fs.readFile('home.html',function(err,data) {
+              // if(err) return console.error(err);
+              if (err) return console.error(err);
+              res.writeHead(200, {'Content-Type':'text/html'});
+              res.end(data);
+              console.log(data.toString());
+            });
+            break;
+        case '/about':
+              res.writeHead(200, {'Content-Type': 'text/plain'});
+              res.end('about page');
+              break;
+        default:
+            res.writeHead(404, {'Content-Type': 'text/plain'});
+              res.end('Not found');
+              break;
+            }
+        }).listen(process.env.PORT || process.env.IP); 
+
+
 
