@@ -43,6 +43,12 @@ http.createServer(function (req,res) {
             res.end('results');
             break;
             
+        case'/delete':
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.write(JSON.stringify(books.delete('beekeeping for dummies')));
+            res.end('results');
+            break; 
+            
         default:
             res.writeHead(404, {'Content-Type': 'text/plain'});
             res.end('Not found');
