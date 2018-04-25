@@ -13,8 +13,8 @@ var books = [
 
 ];
 
-// Returns all array items
 
+// Returns all array items
 exports.getAllBooks = function() {
     return books;
 };
@@ -25,6 +25,21 @@ exports.findTitle = (title) => {
         
         return item.title == title;
     });
+    
 };
+    
+//Deletes one item from the array
+exports.delete = (title) => {
+    const originalCount = books.length;
+    //filter creates new array
+    books = books.filter((item) =>{
+        return item.title.toLowerCase() != title;
+    });
+    
+//Boolean to idicate if item deleted
+return books.length != originalCount;
+    
+    };
+
 
 
