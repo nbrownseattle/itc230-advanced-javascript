@@ -19,10 +19,14 @@
   "bugs": {
     "url": "https://github.com/nbrownseattle/itc230-advanced-javascript/issues"
   },
+<<<<<<< HEAD
   "homepage": "https://github.com/nbrownseattle/itc230-advanced-javascript#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0"
   }
+=======
+  "homepage": "https://github.com/nbrownseattle/itc230-advanced-javascript#readme"
+>>>>>>> c854c76c9a9c888647a0b8bf4426766bfad9ce36
 }
