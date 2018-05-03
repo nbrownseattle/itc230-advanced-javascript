@@ -39,7 +39,7 @@ exports.delete = (title) => {
 //Boolean to idicate if item deleted
 return books.length != originalCount;
     
-    };
+};
 
 
 

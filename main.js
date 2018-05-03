@@ -1,61 +1,73 @@
 /* ITC 230 Nicole Brown. 
-* Assignment 1 Get Node.js up and running.
+* Assignment 3 Express yourself
 * PLEASE NOTE: File shoud be named index.js, I named it main.js by mistake. 
 */
 
 /*routing*/
 
-var http = require("http"); 
-var fs = require("fs");
 var books = require('./book');
+'use strict'
+const express = require("express");
+const app = express();
+
+app.set('port', process.env.PORT || 3001);
+app.use(express.static(__dirname + '/public')); // set location for static files
+app.use(require("body-parser").urlencoded({extended: true})); // parse form submissions
+
+//
+let handlebars =  require("express-handlebars");
+app.engine(".html", handlebars({extname: '.html'}));
+app.set("view engine", ".html")
 
 
-http.createServer(function (req,res) {
-    //changes url to lower
-    var path = req.url.toLowerCase();
+{// send static file as response
+app.get('/', (req, res) => {
+res.render('home');
+});
     
-    //switch to path
-    switch(path) {
-        case '/':
-            fs.readFile('home.html',function(err,data) {
-              // if(err) return console.error(err);
-              if (err) return console.error(err);
-              res.writeHead(200, {'Content-Type':'text/html'});
-              res.end(data);
-              console.log(data.toString());
-            });
-            break;
-            
-        case '/about':
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.end('about page');
-            break;
-       
-        case'/getall':
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.write(JSON.stringify(books.getAllBooks()));
-            res.end('results');
-            break;
-            
-        case'/get':
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.write(JSON.stringify(books.findTitle('beekeeping for dummies')));
-            res.end('results');
-            break;
-            
-        case'/delete':
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.write(JSON.stringify(books.delete('beekeeping for dummies')));
-            res.end('results');
-            break; 
-            
-        default:
-            res.writeHead(404, {'Content-Type': 'text/plain'});
-            res.end('Not found');
-            break;
-            
-}
-        
-        }).listen(process.env.PORT || 3000); 
+app.get('/about', (req, res) => {
+ res.type('text/plain');
+ res.send('About page');
+});
 
+// app.get('/get', (req, res) => {
+// res.type('text/plain');
+// //res.send('About page');
+// });
+
+// send content of 'home' view
+app.get('/get', (req,res) => {
+let result = books.findTitle(req.query.title);
+res.render('details', {title: req.query.title, result: result });
+});
+
+app.post('/get', (req,res) => {
+let result = books.findTitle(req.body.title);
+res.render('details', {title: req.body.title, result: result });
+});
+
+app.get('/getall', (req, res) => {
+res.type('text/plain');
+//res.send('About page');
+});
+app.get('/delete', (req, res) => {
+res.type('text/plain');
+//res.send('About page');
+});
+
+// define 404 handler
+app.use( (req,res) => {
+ res.type('text/plain'); 
+ res.status(404);
+ res.send('404 - Not found');
+});
+
+}
+
+app.listen(app.get('port'), () => {
+ console.log('Express started'); 
+});
+  
+        
+ 
 
