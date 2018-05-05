@@ -1,7 +1,6 @@
-/*Nicole Brown ITC 230 assignment 2 book.js file*/
+/*Nicole Brown ITC 230 assignment 3 book.js file*/
 
 //array list of book titles
-//let books
 var books = [
 
 {title:"honey bee democracy",author:"thomas d seeley",pubdate:"2010"},
@@ -14,7 +13,7 @@ var books = [
 ];
 
 
-// Returns all array items
+// Returns all items from the array
 exports.getAllBooks = function() {
     return books;
 };
@@ -22,24 +21,25 @@ exports.getAllBooks = function() {
 //Returns one array item
 exports.findTitle = (title) => {
     return books.find((item) => {
-        
-        return item.title == title;
+    return item.title == title;
+    //return item.title.toLowerCase() == title.toLowerCase;
     });
     
 };
-    
-//Deletes one item from the array
+ 
+//deletes one array item   
 exports.delete = (title) => {
-    const originalCount = books.length;
-    //filter creates new array
-    books = books.filter((item) =>{
-        return item.title.toLowerCase() != title;
+    console.log(title);
+    let oldLength = books.length;
+    books = books.filter((item) => {
+        return item.title !== title;
     });
-    
-//Boolean to idicate if item deleted
-return books.length != originalCount;
-    
+
+    return { "deleted": books.length !== oldLength, "total": books.length };
 };
+
+//Tests this at the command ln to confirm delete function works as designed
+//run this at prompt $ node book.js
 
 
 
