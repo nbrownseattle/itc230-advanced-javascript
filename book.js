@@ -21,8 +21,7 @@ exports.getAllBooks = function() {
 //Returns one array item
 exports.findTitle = (title) => {
     return books.find((item) => {
-    return item.title == title;
-    //return item.title.toLowerCase() == title.toLowerCase;
+    return item.title.toLowerCase() == title.toLowerCase(); 
     });
     
 };
@@ -32,7 +31,7 @@ exports.delete = (title) => {
     console.log(title);
     let oldLength = books.length;
     books = books.filter((item) => {
-        return item.title !== title;
+    return item.title.toLowerCase() !== title.toLowerCase();
     });
 
     return { "deleted": books.length !== oldLength, "total": books.length };
