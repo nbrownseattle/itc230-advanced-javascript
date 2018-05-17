@@ -1,11 +1,12 @@
 /* ITC 230 Nicole Brown. 
-* Assignment 3 Express yourself
+* Assignment 5 Database Integration
 * PLEASE NOTE: File shoud be named index.js, I named it main.js by mistake. 
 */
 
 /*routing*/
 
-var books = require('./book');
+var Book = require('./models/bookdb');
+var books = require('./book'); //remove this eventually
 'use strict';
 const express = require("express");
 const app = express();
@@ -18,11 +19,60 @@ let handlebars =  require("express-handlebars");
 app.engine(".html", handlebars({extname: '.html'}));
 app.set("view engine", ".html");
 
-{// send static file as response
+// send static file as response
 app.get('/', (req, res) => {
 res.render('home');
 });
 
+
+/*******START OF db SCRIPTS**************************************/
+//Find one book in the db
+app.get('/get', (req,res) => {
+ console.log(req.query.title);
+ Book.findOne({ title: req.query.title.toLowerCase()}, (err, book) => {
+  console.log(err);
+  console.log(book);
+  if(err) return (err);
+  res.type('text/html');
+ res.render('details', {title: req.query.title, result: book });
+ });
+});
+
+// Post one book from the db
+app.post('/get', (req,res) => {
+ Book.findOne({title: req.body.title}, (err, book) => {
+ if (err) return (err);
+  res.type('text/html');
+  res.render('details', { title: req.body.title, book });
+  });
+});
+
+// get all the books in the db
+app.get('/getAll', (req, res) => {
+ Book.find({}, (err,title) => {
+ // console.log(err);
+  //console.log(Book);
+ if (err) return (err);
+ console.log(title.length);
+ res.render('home', {book: title });
+ 
+ });
+});
+
+//DANGER ZONE!!!!!
+app.get('/delete', (req,res, next) => {
+   Book.remove({title: req.query.title }, (err, result) => {
+       console.log(result);
+       console.log(err);
+       let message = "deleted";
+        if (err) return "not deleted, item not found";
+            res.type('text/html'); 
+            res.render('delete', {message:message, title: req.query.book });
+       });
+   }); 
+ 
+
+/****************OLD CODE FROM ASSIGNMENT 3**********************************************************/
 //send content of 'home' view
 app.get('/get', (req,res) => {
 let result = books.findTitle(req.query.title);
@@ -58,17 +108,15 @@ res.render('details', {title: req.body.title, result: result });
 
 
 // define 404 handler
-app.use( (req,res) => {
+app.use((req,res) => {
  res.type('text/plain'); 
  res.status(404);
  res.send('404 - Not found');
 });
 
-}
-
 app.listen(app.get('port'), () => {
  console.log('Express started'); 
 });
 
- 
+
 
