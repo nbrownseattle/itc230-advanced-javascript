@@ -64,13 +64,27 @@ app.get('/delete', (req,res, next) => {
    Book.remove({title: req.query.title }, (err, result) => {
        console.log(result);
        console.log(err);
-       let message = "deleted";
-        if (err) return "not deleted, item not found";
+      let deleted = result;
+      console.log(deleted);
+        if (err) return next(err);
             res.type('text/html'); 
-            res.render('delete', {message:message, title: req.query.book });
+            res.render('delete', {title: req.query.title, deleted: deleted});
        });
    }); 
- 
+   
+
+ //add a new book to the db. This should be insert
+app.post('/add', function (req, res,next) {
+    Book.insert({ "title": req.body.title, "author": req.body.author,
+    "pubdate": req.body.pubdate, "quantity": req.body.quantity}, 
+     (err, result) => {
+        if (err) return next(err);
+      
+      
+            res.type('text/html');
+            res.render('Add', { result, total: total });
+        });
+    }); 
 
 /****************OLD CODE FROM ASSIGNMENT 3**********************************************************/
 //send content of 'home' view

@@ -5,13 +5,13 @@
 
     
   <h2>Details for {{title}}</h2>
-  {{#if result}}
+  {{#if book}}
   <ul>
-    <li>Title: {{ result.title }}
-    <li>Author: {{ result.author }}
-    <li>ISBN: {{ result.isbn }}
-    <li>Pubdate: {{ result.pubdate }}
-    <li>Quantity: {{ result.quantity }}
+    <li>Title: {{ book.title }}
+    <li>Author: {{ book.author }}
+    <li>ISBN: {{ book.isbn }}
+    <li>Pubdate: {{ book.pubdate }}
+    <li>Quantity: {{ book.quantity }}
     </ul>
   {{else}}
     not found
