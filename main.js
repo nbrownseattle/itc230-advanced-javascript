@@ -6,7 +6,7 @@
 /*routing*/
 
 var Book = require('./models/bookdb');
-var books = require('./book'); //remove this eventually
+//var books = require('./book'); //remove this eventually
 'use strict';
 const express = require("express");
 const app = express();
@@ -50,8 +50,6 @@ app.post('/get', (req,res) => {
 // get all the books in the db
 app.get('/getAll', (req, res) => {
  Book.find({}, (err,title) => {
- // console.log(err);
-  //console.log(Book);
  if (err) return (err);
  console.log(title.length);
  res.render('home', {book: title });
@@ -59,13 +57,12 @@ app.get('/getAll', (req, res) => {
  });
 });
 
-//DANGER ZONE!!!!!
+//DANGER ZONE!!!!! Deletes one book
 app.get('/delete', (req,res, next) => {
    Book.remove({title: req.query.title }, (err, result) => {
-       console.log(result);
-       console.log(err);
+       //console.log(err);
       let deleted = result;
-      console.log(deleted);
+      //console.log(deleted);
         if (err) return next(err);
             res.type('text/html'); 
             res.render('delete', {title: req.query.title, deleted: deleted});
@@ -73,53 +70,33 @@ app.get('/delete', (req,res, next) => {
    }); 
    
 
- //add a new book to the db. This should be insert
-app.post('/add', function (req, res,next) {
-    Book.insert({ "title": req.body.title, "author": req.body.author,
-    "pubdate": req.body.pubdate, "quantity": req.body.quantity}, 
-     (err, result) => {
-        if (err) return next(err);
-      
-      
+//Updates a book.
+app.post('/add', (req, res, next) => {
+   Book.update({"title": req.body.title, 
+   "author": req.body.author, 
+   "isbn": req.body.isbn, 
+   "pubdate": req.body.pubdate,  
+   "quantity": req.body.quantity } , (err, result) => {
+      if (err) return next(err);
+       let added = result;
             res.type('text/html');
-            res.render('Add', { result, total: total });
+            res.render('add', {title: req.body.title, added: added});
         });
     }); 
 
-/****************OLD CODE FROM ASSIGNMENT 3**********************************************************/
-//send content of 'home' view
-app.get('/get', (req,res) => {
-let result = books.findTitle(req.query.title);
-res.render('details', {title: req.query.title, result: result });
-});
-
-//post a title
-app.post('/get', (req,res) => {
-let result = books.findTitle(req.body.title);
-res.render('details', {title: req.body.title, result: result });
-});
-
-// //get all books
-// app.get('/get', (req, res) => {
-// console.log(req.query);
-// var found = books.getAllBooks(req.query.title);
-// res.render('details', {title: req.query.title, result: found, books: books.getAllBooks()});
-// });
-
-//deletes one item
-app.get('/delete', (req,res) => {
-//console.log(req.query.title);
-let result = books.delete(req.query.title);
-console.log(result);
-res.render('delete', {title: req.query.title, result: result });
-});
-
-//posts results of delete action
-app.post('/get', function (req, res) {
-let result = books.delete(req.body.title);
-res.render('details', {title: req.body.title, result: result });
-});
-
+//attempts to append a book, however it updates one record as above...
+app.post('/add', (req, res, next) => {
+   Book.insert({"title": req.body.title, 
+   "author": req.body.author, 
+   "isbn": req.body.isbn, 
+   "pubdate": req.body.pubdate,  
+   "quantity": req.body.quantity } , (err, result) => {
+      if (err) return next(err);
+       let added = result;
+            res.type('text/html');
+            res.render('add', {title: req.body.title, added: added});
+        });
+    }); 
 
 // define 404 handler
 app.use((req,res) => {
