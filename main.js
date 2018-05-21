@@ -85,18 +85,35 @@ app.post('/add', (req, res, next) => {
     }); 
 
 //attempts to append a book, however it updates one record as above...
+// app.post('/add', (req, res, next) => {
+//    Book.insert({"title": req.body.title, 
+//    "author": req.body.author, 
+//    "isbn": req.body.isbn, 
+//    "pubdate": req.body.pubdate,  
+//    "quantity": req.body.quantity } , (err, result) => {
+//       if (err) return next(err);
+//        let added = result;
+//             res.type('text/html');
+//             res.render('add', {title: req.body.title, added: added});
+//         });
+//     }); 
+
+//Adds new book. This approach works
 app.post('/add', (req, res, next) => {
-   Book.insert({"title": req.body.title, 
-   "author": req.body.author, 
-   "isbn": req.body.isbn, 
-   "pubdate": req.body.pubdate,  
-   "quantity": req.body.quantity } , (err, result) => {
-      if (err) return next(err);
-       let added = result;
-            res.type('text/html');
-            res.render('add', {title: req.body.title, added: added});
-        });
-    }); 
+    let obj = {
+        title: req.body.title, 
+        author: req.body.author,
+        isbn: req.body.isbn,
+        pubdate: req.body.pubdate,
+        quantity: req.body.quantity,
+    };
+    Book.create(obj, (err, albums) =>{
+        if(err) return next(err);
+        res.type('text/html');
+        res.render('add', {result: Book, title: req.query.title});
+    });
+});
+
 
 // define 404 handler
 app.use((req,res) => {
