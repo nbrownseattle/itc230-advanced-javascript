@@ -107,7 +107,7 @@ app.post('/add', (req, res, next) => {
         pubdate: req.body.pubdate,
         quantity: req.body.quantity,
     };
-    Book.create(obj, (err, albums) =>{
+    Book.create(obj, (err, book) =>{
         if(err) return next(err);
         res.type('text/html');
         res.render('add', {result: Book, title: req.query.title});
