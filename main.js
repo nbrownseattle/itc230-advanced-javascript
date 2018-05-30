@@ -31,7 +31,6 @@ app.get('/', (req, res) => {
 });
 
 
-
 /**************START OF API ROUTES*******************************/
 
 //Find one book in the db
@@ -42,7 +41,7 @@ app.get('/api/book/:title', (req,res) => {
  });
 });
 
-// get all the books in the db
+//Gets all the books in the db
 app.get('/api/book', (req, res) => {
  Book.find({}, (err,books) => {
   if (err) return (err);
@@ -60,30 +59,26 @@ app.get('/api/delete/:title', (req,res, next) => {
            res.json(title);
        });
    }); 
-   
- /*
- Add a book. This is throwing an error when I run the following test in browser:
- TEST
- https://itc230-workspace-nbrownseattle.c9users.io/api/book/add/:bee6/:test6/:6666666666/:2000/:1
- ERROR:
- CastError: Cast to number failed for value ":6666666666" at path "isbn"
- at new CastError 
- NOTES:
- My test in the url may be faulty or there is a problem with my code below..
- */
-
-app.get('/api/book/add/:title/:author/:isbn/:pubdate/:quantity', (req, res, next) => {
-   let title = req.params.title;
-   console.log(typeof req.params.title);
-   Book.update({title: title}, {title: title, author: req.params.author, 
-   isbn: req.params.isbn, pubdate: req.params.pubdate, quantity: req.params.quantity}, {upsert: true }, (err, result) => {
-       if (err) return next(err);
-       res.json({updated: result.nModified});
+ 
+ //Adds one book to the db
+app.get('/api/book/add/:title/:author/:isbn/:pubdate/:quantity', (req, res) => {
+   let obj = {
+       title: req.params.title,
+       author: req.params.author,
+       isbn: req.params.isbn,
+       pubdate: req.params.pubdate,
+       quantity: req.params.quantity
+   };
+   console.log(req.params.title);
+   Book.create(obj, (err, book) => {
+       if(err) return (err);
+       res.json(book);
    });
+
 });
 
 
- //END API ROUTES  
+//END API ROUTES  
 
 /*******START OF old db SCRIPTS**************************************/
 
