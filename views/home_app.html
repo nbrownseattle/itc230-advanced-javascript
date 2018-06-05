@@ -4,103 +4,89 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Nicole's Home Page</title>
+<title>Urban Bee Library</title>
 
-<!--Link to my style sheet-->
-<link rel="stylesheet" href="css/styles.css" />
    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+   
+<!--Start of UI Styles-->
+<style type="text/css">
+     .flex-container {
+      display: -webkit-flex;
+      display: flex;
+      width: 600px;
+      background-color: lemonchiffon;
+  }
+  
+   #item-list {
+      background-color: cornflowerblue;
+      width: 30%;
+      padding: 0px 10px 0px 0px;
+  }
+  
+   #item-details {
+      background-color: gainsboro;
+      width: 75%;
+      padding: 10px;
+  }
+    
+</style>
 </head> 
-
 <body>
-
-<div id="wrapper">
-
-<div id="box1">
-	<img id="logo" src="images/logo1.gif" alt="Logo">
-</div>
-
-<div id="box2">
-
-<ul class="a">
-	<li>Urban Bee Resource Library</li>
-</ul>
-
-</div><!--close box2-->
-
+    <h1>Urban Bee Library</h1>
+    
 <div id="root"/>
 <script type="text/babel">
-
-  class MyApp extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                items: {{{books}}}
-            }
-               
-        }
-        render() {
-            return (
-                
-                <div> <h1>Bee Books!</h1></div>
-                <BookList books =  {this.state.items}/>
-                );
-        }
+const Title = ({title}) => {
+      // simple component w/ single property
+      return <div><h2>{title}</h2></div>;
     }
-     
-     
-     // UI Components
-     
-     const BookList =({books}) => {
-         
-     }
+    
+    const ItemList = ({items, filter, show}) => {
+      // generate array of item nodes
+      const itemNodes = items.map((item) => {
+          return <li id={item._id} key={item._id} onClick={show}>{item.title}</li>
+      });
+      return <ul>{itemNodes}</ul>;
+    }
+
+class MyApp extends React.Component {  
+  constructor(props) {  
+    super(props);  
+    this.state = {
+       items: {{{books}}},
+       currentItem:{}//current selected item
+    };
+    
+   // bind App context to functions used by child components
+    // this.onSearchChange = this.onSearchChange.bind(this);
+    // this.onChange = this.onChange.bind(this);
+    // this.onSave = this.onSave.bind(this);
+    // this.onDelete = this.onDelete.bind(this);
+    // this.onClear = this.onClear.bind(this);
    
-   
-  ReactDOM.render( <MyApp/>, document.getElementById('root') );
-</script>
-<div id="banner">
-	<img src="images/urban.gif" alt="Urban Beekeeping">
+  } // end constructor
+  
+
+            
+  render() { 
+    return (
+      <div>
+      <Title title ="Book list"/>
+      <div className="flex-container">
+      <ItemList items={this.state.items} />
+      </div>
+      </div>
+       ); 
+  } //end render
+} //end MyApp class
+
     
 
-</div>
+ReactDOM.render(  <MyApp />,  document.getElementById('root') );
 
-<main>
+</script>
 
-
-<p>In hac habitasse platea dictumst. Phasellus ac mi et ipsum elementum tincidunt. Vestibulum quis faucibus orci. Vivamus ornare dictum vehicula. Donec a magna id ante varius commodo. Cras eu nulla a erat egestas rhoncus. Mauris suscipit eros non bibendum lacinia. Praesent commodo sapien id nisl molestie porttitor</p>
-
-</main>
-
-<aside>
-<h3>Ways You Can Help Honeybees</h3>
-  
-  <div>
-    <p>
-    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
-    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
-    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
-    mauris vel est.
-    </p>
-    <p>
-    Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
-    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-    inceptos himenaeos.
-    </p>
-  </div>
-</div>
-
-</aside>
-   
-<footer>
-<ul>
-<li>Copyrite &copy; 2018</li>
-<li>All Rights Reserved</li>
-<li><a href="../index.html">Web Design by Nicole</a></li> 
-
-</ul>
-</footer>
-
-</div> <!--end wrapper-->
 </body>
 </html>
