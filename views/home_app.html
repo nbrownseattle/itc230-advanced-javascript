@@ -19,38 +19,35 @@
       background-color: lemonchiffon;
   }
   
+   .title{
+    margin: 0 auto;
+    /*text-align: center;*/
+    width: 600px;
+    font-size: 1em;
+  }
+  
    #item-list {
-      background-color: cornflowerblue;
-      width: 30%;
+      background-color: lemonchiffon;
+      width: 50%;
       padding: 0px 10px 0px 0px;
   }
   
    #item-details {
       background-color: gainsboro;
-      width: 75%;
+      width: 50%;
       padding: 10px;
   }
     
-</style>
+</style><!--END STYLES-->
 </head> 
 <body>
     <h1>Urban Bee Library</h1>
-    
+ <div id="box1">
+	<img id="logo" src="images/logo1.gif" alt="Logo">
+</div>   
 <div id="root"/>
 <script type="text/babel">
-const Title = ({title}) => {
-      // simple component w/ single property
-      return <div><h2>{title}</h2></div>;
-    }
-    
-    const ItemList = ({items, filter, show}) => {
-      // generate array of item nodes
-      const itemNodes = items.map((item) => {
-          return <li id={item._id} key={item._id} onClick={show}>{item.title}</li>
-      });
-      return <ul>{itemNodes}</ul>;
-    }
-
+//Parent for the app
 class MyApp extends React.Component {  
   constructor(props) {  
     super(props);  
@@ -58,30 +55,84 @@ class MyApp extends React.Component {
        items: {{{books}}},
        currentItem:{}//current selected item
     };
-    
-   // bind App context to functions used by child components
-    // this.onSearchChange = this.onSearchChange.bind(this);
-    // this.onChange = this.onChange.bind(this);
-    // this.onSave = this.onSave.bind(this);
-    // this.onDelete = this.onDelete.bind(this);
-    // this.onClear = this.onClear.bind(this);
-   
-  } // end constructor
+  }
   
+  // show item details when list item clicked
+showDetails(event){
+// event.target is item clicked. Assumes each item has an id attribute
+    let editItem = this.state.items.find((item) => {
+        return item._id == event.target.id;
+    });
+        this.setState({currentItem: editItem});
+}
 
+render() {
+    //renders the elements
+        return (
+          <div>
+            <div className="title">
+          <Title title="Book List"/>
+          </div>
+          <div className="flex-container">
+            <ItemList
+                items={this.state.items} 
+                show={this.showDetails.bind(this)}
+            />
+            <ItemDetails item={this.state.currentItem}/>
+            </div>
+          </div>
+        );
+      }
+      
+}//END 
+
+
+//START of UI
+
+  const Title = ({title}) => {
+        return (
+           <div><h2>{title}</h2></div>
+        );
+    }
+    
+  const ItemList = ({items, filter, show}) => {
+      // return items that match search entry field, or all items if no entry
+     const itemNodes = items.map((item) => {
+        if (!filter || item.title.toLowerCase().includes(filter)) { 
+          return <li id={item._id} key={item._id} onClick={show}>{item.title}</li>
+        }
+      });
             
-  render() { 
-    return (
-      <div>
-      <Title title ="Book list"/>
-      <div className="flex-container">
-      <ItemList items={this.state.items} />
-      </div>
-      </div>
-       ); 
-  } //end render
-} //end MyApp class
+            
+      return <span id="item-list">
+          <h3>Book Collection</h3>
+        <ul>{itemNodes}</ul>
+        </span>;
+    }   
 
+const ItemDetails = (props) => {
+        return (
+          <span id="item-details">
+            <h3>Details:</h3>
+            <form onChange={props.change}>
+              <input type="text" name="title" placeholder="Title" value={props.item.title || ""} /><p/>
+              <input type="text" name="author" placeholder="Author" value={props.item.author || ""} /><p/>
+              <input type="text" name="isbn" placeholder="Isbn" value={props.item.isbn || ""} /><p/>
+              <input type="text" name="pubdate" placeholder="pubdate" value={getISOstring(props.item.pubdate)} />
+              <input type="text" name="quantity" placeholder="Quantity" value={props.item.quantity || ""} /><p/>
+              
+            </form>
+          </span>
+        );
+    } 
+    
+    // converts date value to yyyy-mm-dd expected by HTML5 date field
+  function getISOstring(dateString) {
+    let date = (dateString) ? new Date(dateString) : new Date();
+    let month = (date.getMonth() >=9) ? date.getMonth()+1 : "0" + (date.getMonth()+1);
+    let day = (date.getDate() >=10) ? date.getDate() : "0" + date.getDate();
+    return date.getFullYear() + "-" + month + "-" + day;    
+  }
     
 
 ReactDOM.render(  <MyApp />,  document.getElementById('root') );
