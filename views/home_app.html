@@ -1,4 +1,4 @@
-<!--ITC 230 Nicole Brown home.html page for Urban Bee Resource Library app-->
+<!--ITC 230 Nicole Brown home_app.html page for Urban Bee Resource Library app-->
 
 <!doctype html>
 <html>
@@ -10,7 +10,7 @@
    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
    
-<!--Start of UI Styles-->
+<!--START of UI Styles-->
 <style type="text/css">
      .flex-container {
       display: -webkit-flex;
@@ -21,7 +21,6 @@
   
    .title{
     margin: 0 auto;
-    /*text-align: center;*/
     width: 600px;
     font-size: 1em;
   }
@@ -37,6 +36,7 @@
       width: 50%;
       padding: 10px;
   }
+  
     
 </style><!--END STYLES-->
 </head> 
@@ -47,7 +47,8 @@
 </div>   
 <div id="root"/>
 <script type="text/babel">
-//Parent for the app
+
+//START MyApp class
 class MyApp extends React.Component {  
   constructor(props) {  
     super(props);  
@@ -55,17 +56,90 @@ class MyApp extends React.Component {
        items: {{{books}}},
        currentItem:{}//current selected item
     };
-  }
+    
+    // bind App context to functions used by child components
+        this.onSearchChange = this.onSearchChange.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.onSave = this.onSave.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+        this.onClear = this.onClear.bind(this);
+  }// END Constructor
   
-  // show item details when list item clicked
-showDetails(event){
-// event.target is item clicked. Assumes each item has an id attribute
+    // lets react handle changes to search form
+      onSearchChange(event) {
+     this.setState({filter: event.target.value.toLowerCase() });
+      }
+  
+  // shows item details when list item clicked
+ showDetails(event){
+ // event.target is item clicked. Assumes each item has an id attribute
     let editItem = this.state.items.find((item) => {
         return item._id == event.target.id;
     });
         this.setState({currentItem: editItem});
 }
 
+  // clears the details from form
+      onClear() {
+        this.setState({currentItem: {}});
+      }
+
+ // handles detail changes
+      onChange(event) {
+        var newItem = this.state.currentItem;
+        newItem[event.target.name] = event.target.value
+        this.setState({currentItem: newItem});
+      }
+
+// saves item
+      onSave() {
+        let newItem = this.state.currentItem;
+        if (!newItem.title) {
+          return;
+        }
+//adds or updates an item
+fetch("/api/add/", {
+          method: "POST",
+        	headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newItem)
+        }).then(res => res.json())
+        	.then((json) => {
+          let newData;
+          if (!newItem._id) { // add new item to array
+            newData = this.state.items;
+            newItem._id = json._id;
+            newData.push(newItem);
+          } else { // update existing item 
+            newData = this.state.items.map((item) => {
+              if (item._id === newItem._id) {
+                item = newItem; 
+              }
+              return item;
+            });          
+          }
+   // updates state with new array
+          this.setState({items: newData});
+        });
+      }
+
+ // record delete
+      onDelete(){
+        let id = this.state.currentItem._id;
+        
+        fetch("/api/delete/" + id).then((response) => {
+            console.log(response);
+          return response.json();
+        }).then((results) => {
+            console.log(results);
+          // Filter all items except the one to be removed
+          const remainder = this.state.items.filter((item) => {
+            return item._id !== id;
+          });
+          // updates state with new array
+          this.setState({items: remainder, currentItem: {}});
+        });
+      }
+    
 render() {
     //renders the elements
         return (
@@ -78,16 +152,16 @@ render() {
                 items={this.state.items} 
                 show={this.showDetails.bind(this)}
             />
-            <ItemDetails item={this.state.currentItem}/>
+            <ItemDetails item={this.state.currentItem} change={this.onChange} save={this.onSave} reset={this.onClear} delete={this.onDelete} />
             </div>
           </div>
         );
       }
       
-}//END 
+}// END My App class
 
 
-//START of UI
+//START of UI elements
 
   const Title = ({title}) => {
         return (
@@ -96,7 +170,7 @@ render() {
     }
     
   const ItemList = ({items, filter, show}) => {
-      // return items that match search entry field, or all items if no entry
+      // return items that match search entry, or all items if no entry
      const itemNodes = items.map((item) => {
         if (!filter || item.title.toLowerCase().includes(filter)) { 
           return <li id={item._id} key={item._id} onClick={show}>{item.title}</li>
@@ -104,12 +178,12 @@ render() {
       });
             
             
-      return <span id="item-list">
-          <h3>Book Collection</h3>
-        <ul>{itemNodes}</ul>
+return <span id="item-list">
+    <h3>Book Collection</h3>
+     <ul>{itemNodes}</ul>
         </span>;
     }   
-
+//detail page fields
 const ItemDetails = (props) => {
         return (
           <span id="item-details">
@@ -118,20 +192,21 @@ const ItemDetails = (props) => {
               <input type="text" name="title" placeholder="Title" value={props.item.title || ""} /><p/>
               <input type="text" name="author" placeholder="Author" value={props.item.author || ""} /><p/>
               <input type="text" name="isbn" placeholder="Isbn" value={props.item.isbn || ""} /><p/>
-              <input type="text" name="pubdate" placeholder="pubdate" value={getISOstring(props.item.pubdate)} />
+              <input type="text" name="pubdate" placeholder="Pubdate" value={getISOstring(props.item.pubdate || "")} /><p/>
               <input type="text" name="quantity" placeholder="Quantity" value={props.item.quantity || ""} /><p/>
-              
             </form>
+            <button onClick={props.save}>Save</button> <button onClick={props.reset}>Reset</button> <button onClick={props.delete}>Delete</button>
           </span>
         );
     } 
     
-    // converts date value to yyyy-mm-dd expected by HTML5 date field
-  function getISOstring(dateString) {
+// converts date value to yyyy-mm-dd expected by HTML5 date field
+ function getISOstring(dateString) {
     let date = (dateString) ? new Date(dateString) : new Date();
     let month = (date.getMonth() >=9) ? date.getMonth()+1 : "0" + (date.getMonth()+1);
     let day = (date.getDate() >=10) ? date.getDate() : "0" + date.getDate();
-    return date.getFullYear() + "-" + month + "-" + day;    
+    return date.getFullYear() + "-" + month + "-" + day; 
+       
   }
     
 
