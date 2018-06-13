@@ -9,10 +9,12 @@ var Book = require('./models/bookdb');
 'use strict';
 const express = require("express");
 const app = express();
+let bodyParser = require("body-parser");
 
 app.set('port', process.env.PORT || 3001);
 app.use(express.static(__dirname + '/public')); // set location for static files
 app.use(require("body-parser").urlencoded({extended: true})); // parse form submissions
+app.use(bodyParser.json());
 app.use('/api', require("cors")());
 let handlebars =  require("express-handlebars");
 app.engine(".html", handlebars({extname: '.html'}));
