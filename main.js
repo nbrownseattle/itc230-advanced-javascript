@@ -13,7 +13,7 @@ const app = express();
 app.set('port', process.env.PORT || 3001);
 app.use(express.static(__dirname + '/public')); // set location for static files
 app.use(require("body-parser").urlencoded({extended: true})); // parse form submissions
-
+app.use('/api', require("cors")());
 let handlebars =  require("express-handlebars");
 app.engine(".html", handlebars({extname: '.html'}));
 app.set("view engine", ".html");
@@ -22,7 +22,7 @@ app.set("view engine", ".html");
 // get all the books in the db
 app.get('/', (req, res, next) => {
  Book.find((err,books) => {
-     console.log(books);
+     //console.log(books);
  if (err) return next (err);
  res.render('home_app', {books: JSON.stringify(books)});
  
@@ -35,19 +35,19 @@ app.get('/', (req, res, next) => {
 // find one book in the db collection
 app.get('/api/book/:title', (req, res, next) => {
     let title = req.params.title;
-    console.log(title);
+    //console.log(title);
     Book.findOne({title: title}, (err, result) => {
         if (err || !result) return next(err);
         res.json( result );    
     });
 });
 
-// gets all the books in the db collection
-app.get('/api/book', (req, res) => {
- Book.find({}, (err,books) => {
-  if (err) return (err);
-  console.log(books.length);
-  res.json(books);
+// get all the books in the db collection
+app.get('/api/book', (req, res, next) => {
+ Book.find((err,results) => {
+  if (err || !results) return next (err);
+  //console.log(books);
+  res.json(results);
  
  });
 });
@@ -64,14 +64,14 @@ app.get('/api/delete/:id', (req,res, next) => {
 app.post('/api/add/', (req, res, next) => {
     // find and update or add new book
   if (!req.body._id) { // insert new book
-        let book = new Book({title:req.body.title,author:req.body.author,isbn:req.body.isbn,pubdate:req.body.pubdate,quantity:req.body.quantity});
+        let book = new Book({title:req.body.title, author:req.body.author, isbn:req.body.isbn, pubdate:req.body.pubdate, quantity:req.body.quantity});
         book.save((err,newBook) => {
             if (err) return next(err);
             console.log(newBook);
             res.json({updated: 0, _id: newBook._id});
         });
     } else { // update existing book
-        Book.updateOne({ _id: req.body._id}, {title:req.body.title,author:req.body.author,isbn:req.body.isbn,pubdate:req.body.pubdate,quantity:req.body.quantity}, (err, result) => {
+        Book.updateOne({ _id: req.body._id}, {title:req.body.title, author:req.body.author, isbn:req.body.isbn, pubdate:req.body.pubdate, quantity:req.body.quantity}, (err, result) => {
             if (err) return next(err);
             res.json({updated: result.nModified, _id: req.body._id});
         });

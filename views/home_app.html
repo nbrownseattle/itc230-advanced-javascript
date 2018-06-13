@@ -45,7 +45,7 @@
  <div id="box1">
 	<img id="logo" src="images/logo1.gif" alt="Logo">
 </div>   
-<div id="root"/>
+<div id="root"></div>
 <script type="text/babel">
 
 //START MyApp class
@@ -63,7 +63,7 @@ class MyApp extends React.Component {
         this.onSave = this.onSave.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onClear = this.onClear.bind(this);
-  }// END Constructor
+  } // END Constructor
   
     // lets react handle changes to search form
       onSearchChange(event) {
@@ -79,7 +79,7 @@ class MyApp extends React.Component {
         this.setState({currentItem: editItem});
 }
 
-  // clears the details from form
+  // clear the details from form
       onClear() {
         this.setState({currentItem: {}});
       }
@@ -97,7 +97,7 @@ class MyApp extends React.Component {
         if (!newItem.title) {
           return;
         }
-//adds or updates an item
+// adds or updates an item
 fetch("/api/add/", {
           method: "POST",
         	headers: { 'Content-Type': 'application/json' },
@@ -122,7 +122,7 @@ fetch("/api/add/", {
         });
       }
 
- // record delete
+ // delete a book record
       onDelete(){
         let id = this.state.currentItem._id;
         
@@ -141,23 +141,22 @@ fetch("/api/add/", {
       }
     
 render() {
-    //renders the elements
+        // render app elements
         return (
           <div>
-            <div className="title">
-          <Title title="Book List"/>
-          </div>
+          <Title title="Book List" />
+          <SearchForm filter={this.state.filter} change={this.onSearchChange} />
           <div className="flex-container">
             <ItemList
                 items={this.state.items} 
+                filter={this.state.filter}
                 show={this.showDetails.bind(this)}
             />
             <ItemDetails item={this.state.currentItem} change={this.onChange} save={this.onSave} reset={this.onClear} delete={this.onDelete} />
             </div>
           </div>
-        );
+          );
       }
-      
 }// END My App class
 
 
@@ -166,6 +165,18 @@ render() {
   const Title = ({title}) => {
         return (
            <div><h2>{title}</h2></div>
+        );
+    }
+    
+    const SearchForm = (props) => {
+        return (
+          <div>
+            <input
+              type="text" placeholder="Enter a search term"
+              value={props.filter}
+              onChange={props.change}
+            /><p/>
+          </div>
         );
     }
     
@@ -192,27 +203,26 @@ const ItemDetails = (props) => {
               <input type="text" name="title" placeholder="Title" value={props.item.title || ""} /><p/>
               <input type="text" name="author" placeholder="Author" value={props.item.author || ""} /><p/>
               <input type="text" name="isbn" placeholder="Isbn" value={props.item.isbn || ""} /><p/>
-              <input type="text" name="pubdate" placeholder="Pubdate" value={getISOstring(props.item.pubdate || "")} /><p/>
+              <input type="text" name="pubdate" placeholder="Pubdate" value={getISOstring(props.item.pubdate) || ""} /><p/>
               <input type="text" name="quantity" placeholder="Quantity" value={props.item.quantity || ""} /><p/>
             </form>
             <button onClick={props.save}>Save</button> <button onClick={props.reset}>Reset</button> <button onClick={props.delete}>Delete</button>
           </span>
         );
-    } 
+    } //END form
     
-// converts date value to yyyy-mm-dd expected by HTML5 date field
+ReactDOM.render(<MyApp />,  document.getElementById('root'));
+    
+// converts date (yyyy-mm-dd expected by HTML5 date field)
  function getISOstring(dateString) {
     let date = (dateString) ? new Date(dateString) : new Date();
     let month = (date.getMonth() >=9) ? date.getMonth()+1 : "0" + (date.getMonth()+1);
     let day = (date.getDate() >=10) ? date.getDate() : "0" + date.getDate();
     return date.getFullYear() + "-" + month + "-" + day; 
        
-  }
+  } // END date format
     
 
-ReactDOM.render(  <MyApp />,  document.getElementById('root') );
-
 </script>
-
 </body>
 </html>
