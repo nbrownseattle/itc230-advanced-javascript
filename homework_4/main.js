@@ -35,12 +35,12 @@ let result = books.findTitle(req.body.title);
 res.render('details', {title: req.body.title, result: result });
 });
 
-//get all books
-app.get('/get', (req, res) => {
-console.log(req.query);
-var found = books.getAllBooks(req.query.title);
-res.render('details', {title: req.query.title, result: found, books: books.getAllBooks()});
-});
+// //get all books
+// app.get('/get', (req, res) => {
+// console.log(req.query);
+// var found = books.getAllBooks(req.query.title);
+// res.render('details', {title: req.query.title, result: found, books: books.getAllBooks()});
+// });
 
 //deletes one item
 app.get('/delete', (req,res) => {
