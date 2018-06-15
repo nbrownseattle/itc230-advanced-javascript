@@ -8,8 +8,8 @@ var books = [
 {title:"the beekeeper's handbook",author:"diana sammataro",pubdate:"1973"},
 {title:"natural beekeeping: organic approaches to modern apiculture",author:"ross conrad",pubdate:"2013"},
 {title:"beekeeping for fun and profit",author:"cindy belknap",pubdate:"2011"},
-{title:"langstroth's hive and the honey bee",author:"l l lanstroth",pubdate:"1853"}
-
+{title:"langstroth's hive and the honey bee",author:"l l lanstroth",pubdate:"1853"},
+{title:"javascript for bees",author:"bob beeson",pubdate:"2018"}
 ];
 
 

@@ -1,0 +1,26 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+    <title>Nicole's Details Page</title>
+
+    
+  <h2>Details for {{title}}</h2>
+  {{#if book}}
+  <ul>
+    <li>Title: {{ book.title }}
+    <li>Author: {{ book.author }}
+    <li>ISBN: {{ book.isbn }}
+    <li>Pubdate: {{ book.pubdate }}
+    <li>Quantity: {{ book.quantity }}
+    </ul>
+  {{else}}
+    not found
+  {{/if}}
+  
+  <h2>Delete {{title}} </h2>
+  <input type="button" onclick="location.href='delete?title={{title}}';" value="delete" />
+ 
+  
+  <p><a href="/">home</a></p>
+</body>
+</html> 
