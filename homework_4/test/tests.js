@@ -16,4 +16,21 @@ describe("Books module", () => {
  });
 });
 
+//deletes a book from the array. Asserts true"
+ it("deletes the title", function() {
+    var result = books.delete("honey bee democracy");
+    expect(result.deleted).to.be.true;
+ });
+ 
+ it("delete failed w/ title", () => {
+   var result = books.delete("nobook");
+   expect(result.deleted).to.be.false;
+ });
+//});
+
+
+
+
+
+
 
